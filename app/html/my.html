@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <style type="text/css">
+    	.s1{background: #FFFFFF;text-align: center; margin-top: 47px !important;padding: 10px 0;}
+    	.s1 span,.mui-navigate-right { font-size: 16px;}
+    	.s2{background: #FFFFFF;}
+    	.btn{background:#63B8FF; border: none; width: 300px; font-size: 16px; height: 40px;border-radius: 20px;margin-top: 10px;}
+    	.mui-table-view:before {background-color: #FFFFFF;}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">个人中心</h1>
+	</header>
+	<div class="s1" id="login">
+		<span>登录一下，与我们零距离接触</span>
+		<button type="button" class="mui-btn mui-btn-primary btn" id="login_btn">登录 / 注册</button>
+	</div>
+	
+	<div class="s1" id="user" style="display: none;">
+		<span></span>
+		<button type="button" class="mui-btn mui-btn-primary btn" id="logout_btn">退出登录</button>
+	</div>
+	
+	<div class="s2">
+		<div class="mui-content-padded">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell"><a class="mui-navigate-right" id="info">我发布的信息</a></li>
+				<li class="mui-table-view-cell"><a class="mui-navigate-right" id="about">我的资料</a></li>
+				<li class="mui-table-view-cell"><a class="mui-navigate-right" id="collect">我的收藏</a></li>
+			</ul>
+		</div>
+	</div>	
+	
+	<div class="s2">
+		<div class="mui-content-padded">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell"><a class="mui-navigate-right" id="msg">短消息</a></li>
+				<li class="mui-table-view-cell"><a class="mui-navigate-right" id="send_msg">发送短消息</a></li>
+				<li class="mui-table-view-cell"><a class="mui-navigate-right" id="blacks">黑名单</a></li>
+			</ul>
+		</div>
+	</div>
+	
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+	mui.init();
+	var is_login;
+	mui.plusReady(function(){
+		is_login = plus.webview.currentWebview().flag;
+		user_token = plus.storage.getItem('user_token');
+		pwd = plus.storage.getItem('pwd');
+		autologin = plus.storage.getItem('autologin');
+		
+		if(is_login==1){
+			$('#user span').html("欢迎您："+user_token);
+			$('#user').show();
+			$('#login').hide();
+			
+		}else if(user_token && pwd && autologin=='true'){
+			plus.nativeUI.showWaiting();	//显示等待动画
+			mui.ajax(_baseUrl + "/api/login",{
+				type: "post",
+				data: {
+					user:user_token,
+					pwd:pwd
+				},
+				async: true,
+				dataType: "json",
+				success: function(data) {
+					plus.nativeUI.closeWaiting();	//关闭等待动画
+					if(data.code==1){		//登录成功
+						user = data.data;
+						plus.storage.setItem('uid',user.uid);
+						plus.storage.setItem('userid',user.userid);
+						plus.storage.setItem('user_token',user.username);
+						plus.storage.setItem('pwd',user.userpwd);
+						menu = plus.webview.getWebviewById('index-menu');
+						mui.fire(menu, "have_login", {flag:1});	
+						$('#user span').html("欢迎您："+user_token);
+						$('#user').show();
+						$('#login').hide();
+						is_login =1;
+					} else {
+						plus.ui.toast(data.message);
+					}
+				}
+			});
+		} else {
+			$('#login').show()
+		}
+	})
+	
+	//打开登录窗口
+	document.getElementById('login_btn').addEventListener('tap',function(){
+		mui.openWindow({
+			id:'login',
+			url:'login.html',
+			styles:{
+				top:0,
+				bottom: "50px"
+			}
+		})
+	})
+	
+	//退出登录
+	document.getElementById('logout_btn').addEventListener('tap',function(){
+		plus.nativeUI.showWaiting();	//显示等待动画
+		mui.ajax(_baseUrl + "/api/logout",{
+			type: "post",
+			data: {},
+			async: true,
+			dataType: "json",
+			success: function(data) {
+				plus.nativeUI.closeWaiting();
+				if(data.code==1){		//退出成功
+					plus.webview.getWebviewById('index-menu').reload();
+					plus.storage.setItem('uid','');
+					plus.storage.setItem('userid','');
+					plus.storage.setItem('user_token','');
+					plus.storage.setItem('pwd','');
+					$('#user').hide();
+					$('#login').show();
+					is_login=0;
+				}
+				plus.ui.toast(data.message);
+			}
+		});
+	});
+	
+	//我的信息
+	document.getElementById("info").addEventListener('tap',function(){
+		if(is_login!=1){
+			mui.openWindow({
+				id:'login',
+				url:'login.html',
+				styles:{
+					top:0,
+					bottom: "50px"
+				}
+			})
+			plus.ui.toast('没有登录或已超时！');
+			return false;
+		}
+
+		mui.openWindow({
+			id:"info",
+			url:"info.html",
+			styles: {
+				top: 0,
+				bottom: "50px"
+			}
+		})
+	})
+	
+	//我的收藏
+	document.getElementById("collect").addEventListener('tap',function(){
+		if(is_login!=1){
+			mui.openWindow({
+				id:'login',
+				url:'login.html',
+				styles:{
+					top:0,
+					bottom: "50px"
+				}
+			})
+			plus.ui.toast('没有登录或已超时！');
+			return false;
+		}
+
+		mui.openWindow({
+			id:"collect",
+			url:"collect.html",
+			styles: {
+				top: 0,
+				bottom: "50px"
+			}
+		})
+	})
+	
+	//修改个人资料
+	document.getElementById("about").addEventListener('tap',function(){
+		if(is_login!=1){
+			mui.openWindow({
+				id:'login',
+				url:'login.html',
+				styles:{
+					top:0,
+					bottom: "50px"
+				}
+			})
+			plus.ui.toast('没有登录或已超时！');
+			return false;
+		}
+
+		mui.openWindow({
+			id:"about",
+			url:"about.html",
+			styles: {
+				top: 0,
+				bottom: "50px"
+			}
+		})
+	})
+	
+	//短消息
+	document.getElementById("msg").addEventListener('tap',function(){
+		if(is_login!=1){
+			mui.openWindow({
+				id:'login',
+				url:'login.html',
+				styles:{
+					top:0,
+					bottom: "50px"
+				}
+			})
+			plus.ui.toast('没有登录或已超时！');
+			return false;
+		}
+		
+		arr = plus.webview.all();
+    	for(var i=0;i<arr.length;i++){
+    		var wv_id = arr[i].id;
+    		if( wv_id=='pm' ) arr[i].close();	
+    	}
+    	
+		mui.openWindow({
+			id:"pm",
+			url:"pm.html",
+			styles: {
+				top: 0,
+				bottom: "50px"
+			},
+			extras:{
+				type:"msg"
+			}
+		})
+	})
+	
+	//发送短消息
+	document.getElementById("send_msg").addEventListener('tap',function(){
+		if(is_login!=1){
+			mui.openWindow({
+				id:'login',
+				url:'login.html',
+				styles:{
+					top:0,
+					bottom: "50px"
+				}
+			})
+			plus.ui.toast('没有登录或已超时！');
+			return false;
+		}
+
+		arr = plus.webview.all();
+    	for(var i=0;i<arr.length;i++){
+    		var wv_id = arr[i].id;
+    		if( wv_id=='pm' ) arr[i].close();	
+    	}
+    	
+		mui.openWindow({
+			id:"pm",
+			url:"pm.html",
+			styles: {
+				top: 0,
+				bottom: "50px"
+			},
+			extras:{
+				type:"send_msg"
+			}
+		})
+	})
+	
+	//黑名单
+	document.getElementById("blacks").addEventListener('tap',function(){
+		if(is_login!=1){
+			mui.openWindow({
+				id:'login',
+				url:'login.html',
+				styles:{
+					top:0,
+					bottom: "50px"
+				}
+			})
+			plus.ui.toast('没有登录或已超时！');
+			return false;
+		}
+
+		arr = plus.webview.all();
+    	for(var i=0;i<arr.length;i++){
+    		var wv_id = arr[i].id;
+    		if( wv_id=='pm' ) arr[i].close();	
+    	}
+
+		mui.openWindow({
+			id:"pm",
+			url:"pm.html",
+			styles: {
+				top: 0,
+				bottom: "50px"
+			},
+			extras:{
+				type:"blacks"
+			}
+		})
+	})
+	
+	mui.back=function(){
+		is_quit();
+	}
+</script>

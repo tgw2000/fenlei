@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <a class="mui-icon mui-icon-refreshempty mui-pull-right" id="refresh"></a>
+	    <h1 class="mui-title">我的收藏</h1>
+	</header>
+	
+	<div class="mui-content">
+		<div style="color: #333333;margin:15px 0 20px 0;" id="collect_list">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell loading">加载中</li>
+				</ul>
+				<div class="pages"></div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript" charset="UTF-8">
+    mui.init();
+    mui.plusReady(function(){
+    	page=1;
+		get_collect();
+    })
+   var page,userid;
+   function get_collect(){
+   	    userid = plus.storage.getItem("userid");
+   	    plus.nativeUI.showWaiting();
+    	mui.ajax(_baseUrl + "/api/collect",{ 
+			type: "get",
+			data: {
+				userid:userid,
+				page:page,
+				perpage:30
+			},
+			dataType: "json",
+			timeout: 10000,
+			success: function(data) {
+				plus.nativeUI.closeWaiting();
+				if(data.code==1){
+    				info = data.data.info;
+    				pages = data.data.pages;
+    				if(info){
+    					var html = '';
+	    				$.each(info, function(k,v) {
+    						html = html+'<li class="mui-table-view-cell">'+
+								'<div class="mui-slider-right mui-disabled">'+
+								'<a class="mui-btn mui-btn-red del" infoid='+v.infoid+'>删除</a>'+
+								'</div><div class="mui-slider-handle"><a style="color:#333;" href="javascript:detail(\''+v.infoid+'\');">'+v.title+
+								'</a></div></li>';
+	    					
+	    				});
+	    				$('#collect_list').find('ul').html(html);
+    					$('#collect_list').find('.pages').html(pages);
+    				} else {
+    					$('#collect_list').find('ul').html('目前没有数据！');
+    				}
+    				
+    			} else {
+    				plus.ui.toast(data.message);
+    			}
+			}
+		});
+   }
+   
+  //刷新页面
+  document.getElementById("refresh").addEventListener('tap',function(){
+  		self = plus.webview.currentWebview();
+  		self.reload();
+  })
+  
+  //删除收藏
+	$('#collect_list').on('tap', '.del', function(event) {
+		var li = this.parentNode.parentNode;
+		var infoid = this.getAttribute('infoid');
+		mui.confirm('确认删除该条收藏记录？', '易搜网', ['确认', '取消'], function(e) {
+			if (e.index == 0) {
+				mui.ajax(_baseUrl+'/api/collect/?act=del',{
+					type: "get",
+					data: {
+						infoid:infoid,
+						userid:userid
+					},
+					dataType: "json",
+					timeout: 10000,
+					success: function(data){
+						if(data.code==1){
+							li.parentNode.removeChild(li);
+						}
+						plus.ui.toast(data.message);
+					}
+				});
+			} else {
+				setTimeout(function() {
+					mui.swipeoutClose(li);
+				}, 0);
+			}
+		});
+	});
+  
+  function goPage(p){
+  	 page = p;
+  	 get_collect();
+  }
+</script>

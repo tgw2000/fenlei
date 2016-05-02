@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <style type="text/css">
+		.mui-content{ margin: 12px 15px 0 15px;}
+		.mui-input-row label {text-align: right;}
+		.mui-btn{ width: 100%; height: 38px; font-size: 17px;}
+		.link-area {display: block;margin-top: 10px;text-align: center; font-size:14px;}
+	</style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">注册新用户</h1>
+	</header>
+	<div class="mui-content">
+		<form class="mui-input-group">
+			<div class="mui-input-row">
+				<label>用户名：</label>
+				<input type="text" id="user" class="mui-input-clear" placeholder="请输入用户名"/>
+			</div>
+			<div class="mui-input-row">
+				<label>密码：</label>
+				<input type="password" id="pwd" class="mui-input-clear" placeholder="请输入密码"/>
+			</div>
+			<div class="mui-input-row">
+				<label>确认：</label>
+				<input type="password" id="pwd_again" class="mui-input-clear" placeholder="请再输一次密码"/>
+			</div>
+			<div class="mui-input-row">
+				<label>邮箱：</label>
+				<input type="text" id="email" class="mui-input-clear" placeholder="您的真实邮箱"/>
+			</div>
+		</form>
+		<div class="mui-content-padded" style="text-align: center;">
+			<button type="button" class="mui-btn mui-btn-blue" id="reg">注册帐号</button>
+			<div class="link-area"><a id='login'>已有帐号，去登录！</a></div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript" charset="UTF-8">
+    mui.init();
+ 
+    document.getElementById("reg").addEventListener('tap',function(){
+    	var user = document.getElementById("user");
+    	var pwd = document.getElementById("pwd");
+    	var pwd_again = document.getElementById("pwd_again");
+    	var email = document.getElementById("email");
+		if(user.value.length < 3 || user.value.length >10){
+			plus.ui.toast('用户名限制在3至10个字符之间！');
+			return false;
+		}
+		
+		if(pwd.value.length <6 || pwd.value.length >16){
+			plus.ui.toast('密码限制在6至16个字符之间！');
+			return false;
+		}
+		
+		if(pwd_again.value!=pwd.value){
+			plus.ui.toast('两次输入的密码不一致！');
+			return false;
+		}
+		
+		var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+        if (!reg.test(email.value)){
+        	plus.ui.toast('电子邮箱格式不正确！');
+        	return false;
+        }
+        
+        plus.nativeUI.showWaiting();
+        mui.ajax(_baseUrl+'/api/register',{
+        	type: "post",
+        	data: {
+        		user:user.value,
+        		pwd:pwd.value,
+        		email:email.value
+        	},
+        	dataType: "json",
+        	timeout:10000,
+        	success: function(data){
+        		if(data.code==1){	//注册成功
+        			mui.openWindow({
+        				id: "login",
+        				url: "login.html",
+        				styles: {
+        					top:0,
+        					bottom: "50px"
+        				},
+        				show: {
+        					anishow: "none"
+        				}
+        			});
+        			plus.nativeUI.closeWaiting();
+        			plus.ui.toast(data.message);
+        			
+        			setTimeout(function(){
+        				plus.webview.currentWebview().close();
+        			},500);
+        		} else {
+        			plus.nativeUI.closeWaiting();
+        			plus.ui.toast(data.message);
+        		}
+        	}
+        });
+    })
+    
+    //去登录
+    document.getElementById("login").addEventListener('tap',function(){
+    	mui.openWindow({
+    		id:" login",
+    		url: "login.html",
+    		styles: {
+    			top: 0,
+    			bottom: "50px"
+    		}
+    	});
+    	
+    	setTimeout(function(){
+    		plus.webview.currentWebview().close();
+    	},500);
+    })
+</script>

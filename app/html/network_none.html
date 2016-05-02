@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="../js/mui.min.js"></script>
+    <script src="../js/common.js"></script>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <style type="text/css">
+    	.box { width:100%; margin-top:100px; text-align: center;}
+    	.box p{font-family: "微软雅黑"; margin-top: 20px;font-size: 18px; }
+    	.box p b {color: #666666;}
+    	.box p span {display: block; color: #999999; margin-top: 10px;} 
+    	.box button {width: 50%; height: 40px; margin-top: 20px; font-size: 16px;}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <h1 class="mui-title">提示信息</h1>
+	</header>
+	<div class="mui-content">
+		<div class="box">
+			<img src="../images/wifi.png">
+			<p><b>数据加载失败</b>
+			   <span>请确保你的手机已经连网</span>
+			</p>
+			<button type="button" class="mui-btn mui-btn-red" id="reload">重新加载</button>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript" charset="UTF-8">
+     mui.init();
+     document.getElementById("reload").addEventListener('tap',function(){
+     	var main = plus.webview.getLaunchWebview();
+     	main.show("none");
+     	main.reload();
+     	setTimeout(function(){
+     		plus.webview.currentWebview().close();
+     	},500);
+     });
+     
+	  mui.back = function(){
+	  	is_quit();
+	  }
+</script>

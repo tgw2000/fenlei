@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/app.css">
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<div class="mui-pull-right">
+				<a class="mui-icon mui-icon-star" id="collect"></a>
+			</div>
+			<h1 class="mui-title">详细内容</h1>
+		</header>
+		
+		<div class="loading" style="margin-top: 50px;">正在加载...</div>
+		<div class="detial mui-hidden">
+		<!--图片轮播开始-->	   
+		<div class="mui-slider" style="display: none;">图片加载中...</div>
+		<!--图片轮播结束-->	 
+			<div class="detail_block">
+			    <h3 class="gc3" id="title"></h3>
+			    <p class="info">
+			        <span id="time">更新时间：</span>
+			        <span id="hits"> 浏览量：</span>
+			    </p>
+			    <div id="extr"></div>  
+			    <h3 class="product_desc gc3">物品描述</h3>
+			    <div class="product_desc_cont" id="content"></div>
+			</div>
+			<div class="detail_block list_block">
+				<h3 class="gc3">最新<em id="catname"></em></h3>
+				<ul></ul>
+			</div>
+			
+			
+    		
+		</div>
+		<div class="concat_space"></div>
+		<div class="concat_box" id="concat_box">
+	   		<div class="translucent_layer"></div>
+	   		<span class="phone_num"></span>
+		    <p class="name"></p>
+	   		<a class="phone" href=""><span class="concat_r"><span class="mui-icon mui-icon-phone"></span>电话联系</span></a>
+		</div>
+	</body>
+</html>
+<script type="text/javascript" src="../js/mui.min.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/common.js"></script>
+<script type="text/javascript">
+	mui.init({
+		gestureConfig: {
+			doubletap: true
+		},
+		swipeBack: true //启用右滑关闭功能
+	});
+	
+	var infoid, userid;
+	mui.plusReady(function() {
+		infoid = plus.storage.getItem('infoid');
+		userid = plus.storage.getItem('userid');
+		
+		mui.ajax(_baseUrl + "/api/view/",{
+			type: "get",
+			data: {
+				infoid: infoid
+			},
+			async: true,
+			dataType: "json",
+			success: function(data) {
+				info = data.data.info;
+				extr_field = data.data.extr_field;
+				latest = data.data.latest;
+				photos = data.data.photos;
+				realname = info.realname;
+				
+				if(info.zj){
+					realname += ' ( '+info.zj+' )';
+				} else if(info.fbr){
+					realname +=  ' ( '+info.fbr+' )';
+				}
+				$(".loading").addClass('mui-hidden');
+				$(".detial").removeClass('mui-hidden');
+				
+				$("#title").html(info.title);
+				$("#time").html('更新时间：'+info.refreshtime);
+				$("#hits").html('浏览量：'+info.hits);
+				$("#content").html(info.content);
+				$("#catname").html(info.catname);
+				$(".name").html(realname);
+				$(".phone_num").html(info.mobile);
+				$(".phone").attr('href','tel:'+info.mobile);
+				
+				//信息中的图片轮播
+				if(photos){
+					var first = '<div class="mui-slider-item"><a href="javascript:viewpic(\''+info.infoid+'\');"><img src="'+photos[0].path+'" width="320" height="207" title="'+info.title+'" alt="'+info.title+'"/><p class="mui-slider-title">第 1/'+photos.length+' 张</p></a></div>';
+					var last = '<div class="mui-slider-item"><a href="javascript:viewpic(\''+info.infoid+'\');"><img src="'+photos[photos.length-1].path+'" width="320" height="207" title="'+info.title+'" alt="'+info.title+'"/><p class="mui-slider-title">第'+photos.length+'/'+photos.length+' 张</p></a></div>';
+					var str1 = '<div class="mui-slider-group mui-slider-loop">'+first;
+					var str2 = '<div class="mui-slider-indicator mui-text-right">';
+					
+					$.each(photos, function(k,v) {
+						if(k==0){
+							cls='mui-active';
+							
+						} else {
+							cls ='';
+						}
+						 
+						var title = '第 '+(k+1)+'/'+photos.length+' 张';
+						str1 = str1+'<div class="mui-slider-item"><a href="javascript:viewpic(\''+info.infoid+'\');"><img src="'+v.path+'" width="320" height="207" title="'+info.title+'" alt="'+info.title+'"/><p class="mui-slider-title">'+title+'</p></a></div>';
+						str2 = str2+'<div class="mui-indicator '+cls+'"></div>';
+					});
+					str1 = str1+last+'</div>';
+					str2 = str2+'</div>';
+					$(".mui-slider").html(str1+str2).show();
+					mui(".mui-slider").slider({interval:3000});
+				}
+				
+				//附加字段
+				if(extr_field){
+					var str='';
+					$.each(extr_field, function(k,v) {
+						var field = v.field;		//数据库字段
+						var title = v.title;		//标题
+						var _data = info[field];	//值 
+						if(_data){
+							str=str+'<p><span class="sub">'+title+'：</span>'+_data+'</p>';
+						}
+					});
+					$("#extr").html(str);
+				}
+				
+				//五条最新信息
+				if(latest){
+					$.each(latest, function(k,v) {
+						if(v.qy) qy = '<span class="address">'+v.qy+'</span>'; else qy='';
+						if(v.price){	//价格/售价/出租价格
+							attr1 = '<span class="price">'+v.price+'</span>';
+						} else if(v.wage){	//工资
+							attr1 = '<span class="price">'+v.wage+'</span>';
+						} else {
+							attr1='';
+						}
+						
+						if(v.zj){ //中介
+							attr2 = '<span class="shopper">'+v.zj+'</span>';
+						} else if(v.fbr){	//发布人
+							attr2 = '<span class="shopper">'+v.fbr+'</span>';
+						} else if(v.sex){	//性别
+							attr2 = '<span class="shopper">'+v.sex+'</span>';
+						} else {
+							attr2 = '';
+						}
+						
+						if(v.imgcount>0){
+							icon = '<em class="tu">图</em>';
+						} else {
+							icon = '';
+						}
+						
+						html = '<li><a href="javascript:detail(\''+v.infoid+'\');">'+icon+
+	            			'<div><span class="title">'+v.title+'</span>'+
+	                		'<p class="mt10">'+
+	                    	'<span class="time">'+v.refreshtime+'</span>'+
+	                    	attr1+attr2+qy+
+	                		'</p></div></a></li>';
+	                		
+	                	$('.list_block ul').append(html);
+					});
+				}
+			}
+		});
+	});
+	
+	//收藏信息
+	var isCollect = 0;
+	document.getElementById("collect").addEventListener('tap',function(){
+		var url, collectMsg, className, _isCollect = 0;
+		if(isCollect == 0) {
+			url = _baseUrl + "/api/collect/?act=add";
+			collectMsg = "收藏成功";
+			className = "mui-icon mui-icon-star mui-icon-star-filled";
+			_isCollect = 0;
+		} else if(isCollect == 1) {
+			url = _baseUrl + "/api/collect/?act=del";
+			collectMsg = "取消收藏成功";
+			className = "mui-icon mui-icon-star";
+			_isCollect = 1;
+		}
+		plus.nativeUI.showWaiting();
+		mui.ajax(url,{
+			type: "get",
+			data: {
+				infoid: infoid,
+				userid: userid
+			},
+			dataType: "json",
+			timeout: 10000,
+			success: function(data) {
+				plus.nativeUI.closeWaiting();
+				if(data.code == 1) {		//收藏成功
+					if(_isCollect == 0) {
+						isCollect = 1;
+						document.getElementById("collect").className = className;
+					} else if(_isCollect == 1) {
+						isCollect = 0;
+						document.getElementById("collect").className = className;
+					}
+				}
+				if(data.code ==-3){		//信息已经收藏过
+					isCollect = 1;
+					document.getElementById("collect").className = "mui-icon mui-icon-star mui-icon-star-filled";
+				}
+				plus.ui.toast(data.message);
+			}
+		});
+	});
+</script>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+ 
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    <style type="text/css">
+    	body{background-color: white !important;}
+    	.mui-action-back{ color: white !important;margin-top: 5px;}
+    </style>
+</head>
+<body>
+	<div class="search_bg" style="display: block;">
+		<span>信息搜索</span>
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <div class="search_box">
+	        <input type="text" placeholder="请输入关键词" class="search_text" id="search_text" value="" name="keyword">
+	        <span class="category_bg search_btn" id="search_btn"></span>
+	    </div>
+	    
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+    mui.init({
+		swipeBack: true,  //Boolean(默认false)启用右滑关闭功能,监听Android手机的back、menu按键
+		statusBarBackground: '#f7f7f7',   //设置状态栏颜色,仅iOS可用
+		gestureConfig: {      //手势配置
+			doubletap: true
+		},
+		subpages: [{      //子页面
+			id: 'search.inc',
+			url: 'search.inc.html',
+			styles: {
+				top: '100px',
+				bottom: 0,
+				bounce: 'vertical'
+			},
+			show:{
+				aniShow: 'slide-in-right'
+			}
+		}
+		]
+	});
+    document.getElementById('search_btn').addEventListener('tap',function(){
+    	var kw = document.getElementById('search_text').value;
+    	if(kw == ''){
+    		plus.ui.toast('请输入搜索关键字！');
+    		return false;
+    	}
+    	child = plus.webview.getWebviewById('search.inc');
+    	child.evalJS("do_search('"+kw+"')");	//执行子页面中的do_search方法
+    	//mui.fire('search.inc','do_search',{kw:kw});
+    })
+</script>

@@ -1,0 +1,379 @@
+{
+  "index.html": {
+    "resources": [
+      "js/common.js",
+      "html/list.html",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/app.css",
+      "html/latest.html",
+      "html/list.inc.html",
+      "images/icon.png",
+      "js/jquery.min.js"
+    ],
+    "refer": [
+      "index-menu.html",
+      "html/list.html",
+      "html/index-menu.html",
+      "html/footer.html",
+      "html/category.html",
+      "html/bclass.html",
+      "html/my.html",
+      "html/login.html",
+      "html/latest.html",
+      "html/list.inc.html",
+      "html/search.html",
+      "html/network_none.html"
+    ]
+  },
+  "index-menu.html": {
+    "resources": [
+      "js/jquery.min.js",
+      "js/common.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "images/logo.png"
+    ]
+  },
+  "html/index-menu.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "html/setting.html",
+      "html/my.html",
+      "html/sclass.html",
+      "html/login.html"
+    ]
+  },
+  "html/list.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/app.css",
+      "html/category.html",
+      "html/list.inc.html"
+    ],
+    "refer": [
+      "html/view.html",
+      "html/category.html",
+      "html/list.inc.html",
+      "html/search.html",
+      "html/sclass.html"
+    ]
+  },
+  "html/footer.html": {
+    "resources": [
+      "css/mui.min.css",
+      "fonts/mui.ttf"
+    ]
+  },
+  "html/category.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "html/list.html",
+      "fonts/mui.ttf",
+      "js/common.js",
+      "js/jquery.min.js",
+      "css/app.css"
+    ],
+    "refer": [
+      "html/list.html"
+    ]
+  },
+  "html/view.html": {
+    "resources": [
+      "js/common.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/jquery.min.js",
+      "css/app.css",
+      "images/icon.png",
+      "css/icon.png",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js"
+    ],
+    "refer": [
+      "html/list.html",
+      "html/viewpic.html"
+    ]
+  },
+  "html/bclass.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "html/sclass.html"
+    ]
+  },
+  "html/sclass.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "css/mui.min.css",
+      "fonts/mui.ttf"
+    ],
+    "refer": [
+      "html/list.html",
+      "html/list.inc.html"
+    ]
+  },
+  "html/my.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "css/mui.min.css",
+      "fonts/mui.ttf"
+    ],
+    "refer": [
+      "html/view.html",
+      "html/login.html",
+      "html/modify.html",
+      "html/about.html",
+      "html/info.html",
+      "html/blacks.html",
+      "html/pm.html",
+      "html/collect.html"
+    ]
+  },
+  "html/login.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "html/register.html",
+      "html/my.html",
+      "html/getpwd.html"
+    ]
+  },
+  "html/register.html": {
+    "resources": [
+      "fonts/mui.ttf",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/common.js",
+      "js/jquery.min.js"
+    ],
+    "refer": [
+      "html/login.html"
+    ]
+  },
+  "html/setting.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ]
+  },
+  "html/latest.html": {
+    "resources": [
+      "js/jquery.min.js",
+      "js/common.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "html/list.inc.html"
+    ],
+    "refer": [
+      "html/view.html",
+      "html/list.inc.html",
+      "html/network_none.html"
+    ]
+  },
+  "html/list.inc.html": {
+    "resources": [
+      "js/jquery.min.js",
+      "js/common.js",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "css/app.css",
+      "fonts/mui.ttf"
+    ],
+    "refer": [
+      "html/view.html"
+    ]
+  },
+  "html/search.html": {
+    "resources": [
+      "css/app.css",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "images/icon.png",
+      "fonts/mui.ttf",
+      "html/search.inc.html",
+      "js/common.js",
+      "js/jquery.min.js"
+    ],
+    "refer": [
+      "html/search.inc.html",
+      "html/view.html"
+    ]
+  },
+  "html/search.inc.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/common.js",
+      "js/jquery.min.js",
+      "fonts/mui.ttf",
+      "css/app.css"
+    ],
+    "refer": [
+      "html/view.html"
+    ]
+  },
+  "html/modify.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "js/common.js",
+      "js/jquery.min.js",
+      "css/app.css"
+    ],
+    "refer": [
+      "html/login.html"
+    ]
+  },
+  "html/about.html": {
+    "refer": [
+      "html/login.html"
+    ],
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ]
+  },
+  "html/viewpic.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/zepto-build-with-data.js",
+      "images/icon.png",
+      "js/swipeslide.js",
+      "css/viewpic.css"
+    ]
+  },
+  "html/info.html": {
+    "resources": [
+      "css/app.css",
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "images/point.gif"
+    ],
+    "refer": [
+      "html/view.html"
+    ]
+  },
+  "html/blacks.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ]
+  },
+  "html/pm.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "images/avatar.png"
+    ],
+    "refer": [
+      "html/login.html",
+      "html/pm_view.html"
+    ]
+  },
+  "html/pm_view.html": {
+    "resources": [
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "css/app.css",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "images/avatar.png"
+    ],
+    "refer": [
+      "html/pm.html"
+    ]
+  },
+  "html/getpwd.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/common.js"
+    ],
+    "refer": [
+      "html/register.html",
+      "html/login.html"
+    ]
+  },
+  "html/collect.html": {
+    "resources": [
+      "css/app.css",
+      "js/common.js",
+      "js/jquery.min.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "html/view.html"
+    ]
+  },
+  "html/network_none.html": {
+    "resources": [
+      "images/wifi.png",
+      "fonts/mui.ttf",
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ]
+  }
+}

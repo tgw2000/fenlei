@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/app.css">
+	</head>
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<ul id="info_list">
+				</ul>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script>
+			var index;
+			var page = 1;
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+						
+			if (mui.os.plus) {
+				mui.plusReady(function() {
+					setTimeout(function() {
+						mui('#pullrefresh').pullRefresh().pulldownLoading();
+					}, 100);
+				});
+			} else {
+				mui.ready(function() {
+					mui('#pullrefresh').pullRefresh().pulldownLoading(); //主动下拉加载第一页
+				});
+			}
+			
+			//下拉刷新
+			function pulldownRefresh() {
+				mui.ajax(_baseUrl + "/api/info_all",{
+					type: "get",
+					data: {
+						page: "1",
+						perpage: "20"
+					},
+					async: true,
+					dataType: "json",
+					success: function(data) {
+						page = 2;
+						$("#info_list").html("");
+						$.each(data.data.list, function(index, _data) {
+							if(_data.qy) qy = '<span class="address">'+_data.qy+'</span>'; else qy='';
+						
+							if(_data.imgcount>0){
+								icon = '<em class="tu">图</em>';
+							} else {
+								icon = '';
+							}
+							
+							if(_data.price){	//价格/售价/出租价格
+								attr1 = '<span class="price">'+_data.price+'</span>';
+							} else if(_data.wage){	//工资
+								attr1 = '<span class="price">'+_data.wage+'</span>';
+							} else {
+								attr1='';
+							}
+							
+							if(_data.zj){ //中介
+								attr2 = '<span class="shopper">'+_data.zj+'</span>';
+							} else if(_data.fbr){	//发布人
+								attr2 = '<span class="shopper">'+_data.fbr+'</span>';
+							} else if(_data.sex){	//性别
+								attr2 = '<span class="shopper">'+_data.sex+'</span>';
+							} else {
+								attr2 = '';
+							}
+							
+							if(_data.fwhx) {	//户型
+								attr3 = '<span class="fwhx">'+_data.fwhx+'</span>';
+							}else if(_data.chengse){	//成色
+								attr3= '<span class="fwhx">'+_data.chengse+'</span>';
+							} else {
+								attr3 ='';
+							}
+				
+							var html = '<li>'+
+										'<a href="javascript:detail(\''+_data.infoid+'\');">'+icon+'<div>'+
+											'<span>'+_data.title+'</span>'+
+											'<p><span class="time">'+_data.refreshtime+'</span>'+attr1+attr2+attr3+qy+
+											'</p></div></a>'+
+								   '</li>';
+						
+							$("#info_list").append(html);
+						});
+						mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+						mui('#pullrefresh').pullRefresh().refresh(true);
+					}
+				});
+			}
+			
+			//上拉加载更多
+			function pullupRefresh() {
+				mui.ajax(_baseUrl + "/api/info_all",{
+					type: "get",
+					data: {
+						page: page,
+						perpage: "20"
+					},
+					async: true,
+					dataType: "json",
+					success: function(data) {
+						page++;
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh(page>data.data.totalpage); //参数为true代表没有更多数据了。
+						
+						$.each(data.data.list, function(index, _data) {
+							if(_data.qy) qy = '<span class="address">'+_data.qy+'</span>'; else qy='';
+						
+							if(_data.imgcount>0){
+								icon = '<em class="tu">图</em>';
+							} else {
+								icon = '';
+							}
+							
+							if(_data.price){	//价格/售价/出租价格
+								attr1 = '<span class="price">'+_data.price+'</span>';
+							} else if(_data.wage){	//工资
+								attr1 = '<span class="price">'+_data.wage+'</span>';
+							} else {
+								attr1='';
+							}
+							
+							if(_data.zj){ //中介
+								attr2 = '<span class="shopper">'+_data.zj+'</span>';
+							} else if(_data.fbr){	//发布人
+								attr2 = '<span class="shopper">'+_data.fbr+'</span>';
+							} else if(_data.sex){	//性别
+								attr2 = '<span class="shopper">'+_data.sex+'</span>';
+							} else {
+								attr2 = '';
+							}
+							
+							if(_data.fwhx) {	//户型
+								attr3 = '<span class="fwhx">'+_data.fwhx+'</span>';
+							}else if(_data.chengse){	//成色
+								attr3= '<span class="fwhx">'+_data.chengse+'</span>';
+							} else {
+								attr3 ='';
+							}
+				
+							var html = '<li>'+
+										'<a href="javascript:detail(\''+_data.infoid+'\');">'+icon+'<div>'+
+											'<span>'+_data.title+'</span>'+
+											'<p><span class="time">'+_data.refreshtime+'</span>'+attr1+attr2+attr3+qy+
+											'</p></div></a>'+
+								   '</li>';
+						
+							$("#info_list").append(html);
+						});
+					}
+				});
+			}
+			
+		</script>
+	</body>
+</html>

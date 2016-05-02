@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+ 
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    <style type="text/css">
+    	body{background-color: white !important;}
+    	.mui-action-back{ color: white !important;margin-top: 5px;}
+    </style>
+</head>
+<body>
+	<div class="search_bg" style="display: block;">
+		<span>信息搜索</span>
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <div class="search_box">
+	        <input type="text" placeholder="请输入关键词" class="search_text" id="search_text" value="" name="keyword">
+	        <span class="category_bg search_btn" id="search_btn"></span>
+	    </div> 
+	</div>
+
+	<!--数据列表-->
+	<ul id="info_list" style="position: fixed; top: 90px; height: 500px;padding-bottom: 60px; overflow: scroll;" >
+		
+	</ul>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+    mui.init();
+    var page,keyword;
+    document.getElementById('search_btn').addEventListener('tap',function(){
+    	keyword = document.getElementById('search_text').value;
+    	if(keyword.length == 0){
+    		plus.ui.toast('请输入搜索关键字！');
+    		return false;
+    	}
+    	page =1;
+		get_search();
+    });
+    
+    function get_search(){
+    	plus.nativeUI.showWaiting();
+    	mui.ajax(_baseUrl + "/api/search",{
+			type: "get",
+			data: {
+				page:page,
+				keyword:keyword,
+				perpage: "20"
+			},
+			timeout: 10000,
+			dataType: "json",
+			success: function(data) {
+				plus.nativeUI.closeWaiting();
+				page++;
+				if(data.data.list){
+					var html = '';
+					$.each(data.data.list, function(index, _data) {
+						if(_data.qy) qy = '<span class="address">'+_data.qy+'</span>'; else qy='';
+						
+						if(_data.imgcount>0){
+							icon = '<em class="tu">图</em>';
+						} else {
+							icon = '';
+						}
+						
+						if(_data.price){	//价格/售价/出租价格
+							attr1 = '<span class="price">'+_data.price+'</span>';
+						} else if(_data.wage){	//工资
+							attr1 = '<span class="price">'+_data.wage+'</span>';
+						} else {
+							attr1='';
+						}
+						
+						if(_data.zj){ //中介
+							attr2 = '<span class="shopper">'+_data.zj+'</span>';
+						} else if(_data.fbr){	//发布人
+							attr2 = '<span class="shopper">'+_data.fbr+'</span>';
+						} else if(_data.sex){	//性别
+							attr2 = '<span class="shopper">'+_data.sex+'</span>';
+						} else {
+							attr2 = '';
+						}
+						
+						if(_data.fwhx) {	//户型
+							attr3 = '<span class="fwhx">'+_data.fwhx+'</span>';
+						}else if(_data.chengse){	//成色
+							attr3= '<span class="fwhx">'+_data.chengse+'</span>';
+						} else {
+							attr3 ='';
+						}
+			
+						html = html+'<li>'+
+										'<a href="javascript:detail(\''+_data.infoid+'\');">'+icon+'<div>'+
+											'<span>'+_data.title+'</span>'+
+											'<p><span class="time">'+_data.refreshtime+'</span>'+attr1+attr2+attr3+qy+
+											'</p></div></a>'+
+								   '</li>';
+					});
+					html = html + '<div class="pages">'+data.data.pages+'</div>';
+					$("#info_list").html(html);
+				}
+			}
+		});
+    }
+    
+    function goPage(p){
+    	page = p;
+    	get_search();
+    }
+</script>
