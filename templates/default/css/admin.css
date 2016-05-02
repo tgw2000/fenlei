@@ -1,0 +1,237 @@
+body { color: #000;}
+.tb {
+    background: none repeat scroll 0 0 #D6E0EF;
+    border: 1px solid #333;
+}
+.tb th {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 25px;
+}
+.tb td {
+    background-color: #FFFFFF;
+    font-size: 12px;
+    line-height: 22px;
+}
+.tb input {
+    height: 22px;
+}
+.header {
+    background-color: #333!important;
+    color: #FFFFFF;
+    height: 25px;
+}
+.logbtn {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #666;
+    border-style: solid;
+    border-width: 1px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 3px 0;
+    padding: 2px 5px;
+}
+
+.btn1{
+    width: 120px;
+    height: 30px;
+    font-size: 14px;
+}
+.box {
+    padding: 10px;
+    line-height: 20px;
+    font-size: 14px;
+}
+.box a {color: #000;}
+.box a:hover {color: #ff0000;}
+.box ul li.dian { background: url("../images/icon.png") no-repeat left -1075px; padding-left: 10px;}
+.scan_bg { background-color: #efefef; font-size: 12px;}
+#result {height: 600px; overflow: auto;}
+#photoshow {
+    clear: both;
+    width: 700px;
+}
+#photoshow table {
+    float: left;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 0 6px 5px 0;
+}
+#photoshow table td {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+#photoshow table td a {
+    color: #000000;
+    text-decoration: underline;
+}
+#photoshow table td input {
+    border: 1px solid #999999;
+    font-size: 12px;
+    height: 18px;
+    margin-top: 3px;
+    width: 86px;
+    color: #666;
+}
+#upload_msg {
+    display: none;
+    font-size: 12px;
+}
+#preview {
+    background: none repeat scroll 0 0 #333333;
+    color: #FFFFFF;
+    display: none;
+    padding: 5px;
+    position: absolute;
+}
+.correct{
+    background: url("../images/icon.png") repeat-x scroll 0 -615px transparent;
+    padding-left: 20px;
+    color: green;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+.error{
+    background: url("../images/icon.png") repeat-x scroll 0 -660px transparent;
+    padding-left: 20px;
+    color: red;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+input[type=submit],input[type=button],input[type=reset] {padding: 3px 6px;}
+.fabu_table {color: #333;font-size: 14px;width: 100%;line-height: 25px; padding: 0; margin: 0;}
+.fabu_table th {padding-top: 5px;text-align: right;vertical-align: middle;width: 110px;font-weight: 700; }
+.fabu_table td {padding-top: 5px;vertical-align: middle; }
+.fabu_table input.textInt {border-color: #666666 #DDDDDD #DDDDDD #666666;border-style: solid;border-width: 1px;font-family: Verdana,Geneva,sans-serif,"宋体";padding: 2px; height: 22px; font-size: 14px;}
+.bgon { background-color: #666 !important; color: #fff;}
+.bgon a,.bgon a:hover{ color: #fff;}
+.correct{
+    background: url("../images/main.gif") repeat-x scroll 0 -615px transparent;
+    padding-left: 20px;
+    color: green;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+.error{
+    background: url("../images/main.gif") repeat-x scroll 0 -660px transparent;
+    padding-left: 20px;
+    color: red;
+    font-size: 12px;
+    padding-bottom: 5px;
+}
+/*多文件上传*/
+.swfupload-top {
+    margin-bottom: 10px;
+    position: relative;
+}
+.swfupload-button {
+    height: 23px;
+    line-height: 23px;
+}
+.swfupload-desc {
+    height: 23px;
+    line-height: 23px;
+    padding: 0 10px;
+    display: inline-block;
+    color: #333;
+}
+.swfupload-startupload {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.swfupload-body {
+    background-color: #FFFFFF;
+    border-color: #848484 #E0E0E0 #E0E0E0 #848484;
+    border-style: solid;
+    border-width: 1px;
+    height: 370px;
+    overflow: scroll;
+    padding: 5px;
+    width: auto;
+    color: #333;
+}
+.swfupload-body .item {
+    margin: 5px;
+    width: 100px;
+    display: inline-block;
+}
+.swfupload-body .status {
+    bottom: 5px;
+    height: 17px;
+    left: 0;
+    position: absolute;
+    width: 100px;
+}
+.swfupload-body .photo {
+    background-color: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    padding: 10px;
+    position: relative;
+}
+.swfupload-body .photo:hover {
+    background-color: #E9EFF6;
+    border: 1px solid #5690D2;
+}
+.swfupload-body .message {
+    height: 17px;
+    overflow: hidden;
+    text-align: center;
+    width: 100px;
+}
+.progressbar {
+    border: 1px solid #6FA5DB;
+    height: 5px;
+    margin: 10px 10px 0;
+    padding: 0;
+    width: 80px;
+    display: none;
+}
+.progressbar-inner {
+    background-color: #6FA5DB;
+    height: 5px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    width: 0;
+}
+.delete {
+	display: block;
+	background: url("/templates/default/images/upload_bg.png") no-repeat scroll 4px -96px;
+	width: 16px;
+	height: 16px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	cursor: pointer;
+}
+.swfupload-body .filename {
+    height: 16px;
+    overflow: hidden;
+    text-align: center;
+    width: 100px;
+}
+.swfupload-foot {
+    background-color: #FFFFFF;
+    font: 12px/1 "sans serif",tahoma,verdana,helvetica;
+    padding: 0 0 5px;
+    text-align: right;
+    width: 100%;
+    margin-top: 10px;
+}
+.upload-btn {
+   
+}
+.status {margin-top: 10px;padding-left: 10px;}
+.status a {font-size: 12px; color: #666; text-decoration: underline;}
+.status a.on {font-weight: bold; color: red;}
+/*弹出层*/
+#overlay { display: none; height: 100%; left: 0; position: fixed; top: 0; width: 100%; z-index: 100; background-color: #000000; filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5;}
+*html #overlay { position: absolute; height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');}
+#floatwin { display: none; font-size:12px;position: absolute;z-index:100;background-color: #fff; border: solid 1px #666;}
+#fw_title { padding:0 5px; line-height: 24px; height: 24px; text-align: left;background:url("/templates/default/images/upload_bg.png"); color: #333; border-bottom: solid 1px #cfcfcf;}
+#fw_title .close { cursor: pointer;}
+#fw_title .close b { font-family: "宋体"; font-size: 12px;}
+#fw_body { text-align:left; color: #666; line-height: 20px; padding: 20px;}

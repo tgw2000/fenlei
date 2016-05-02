@@ -1,0 +1,10 @@
+{
+	"android":{
+		"version": "1.0.5",
+		"log": "修复导航菜单返回错误，修改启动画面,优化页面打开速度",
+		"downloadUrl": "http://m.yiiso.cn/yiiso.apk"
+		},
+		"ios":{
+			
+		}
+}

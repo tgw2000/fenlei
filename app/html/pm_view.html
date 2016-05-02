@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    <style type="text/css">
+    
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <a class="mui-icon mui-icon-refreshempty mui-pull-right" id="refresh"></a>
+	    <h1 class="mui-title">站内短消息</h1>
+	</header>
+	
+	<div class="mui-content mui-scroll-wrapper">
+		<div class="mui-scroll">
+			<div style="margin-top: 5px;">
+				<div id="segmentedControl" class="mui-segmented-control mui-segmented-control-inverted">
+					<a class="mui-control-item mui-active" href="#c_msg" id="msg">短消息</a>
+					<a class="mui-control-item" href="#c_send_msg" id="send_msg">发送短消息</a>
+					<a class="mui-control-item" href="#c_blacks" id="blacks">黑名单</a>
+				</div>
+			</div>
+		
+			<!--短消息列表-->		
+			<div style="color: #333333;" class="pmlist">
+				<div class="loading">数据加载中...</div>
+			</div>
+			
+			<div class="reply">
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tr>
+						<td width="64" valign="top" id="avatar"><img class="avatar" src="../images/avatar.png" width="48" height="48"></td>
+						<td><textarea id="message" rows="5" placeholder="回复内容限制在100字以内！"></textarea></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><button type="button" class="mui-btn mui-btn-red">发送回复</button></td>
+					</tr>
+				</table>			
+			</div>
+		</div>
+	</div>
+	
+	<!-- 单条模板 -->
+	<div id="pm_tpl" style="display: none;">
+		<dl class="mui-table-view-cell cc">
+			<div class="mui-slider-right mui-disabled" style="height:30px;">
+				<a class="mui-btn mui-btn-red del" rel='{f_id}'>删除</a>
+	        </div>
+	        <div class="mui-slider-handle">
+	        	<dt class="l">{f_avatar}</dt>
+	            <dt class="m">
+	            	<font color="#007aff">您</font><br />
+	            	<span class="msg">{f_message}</span><br />
+	                <span class="time">{f_time}</span>
+	            </dt>
+	        </div>
+		</dl>
+	</div>
+</body>
+</html>
+
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+	mui.init();
+	var uid,touid, page;
+	mui.plusReady(function(){
+		uid = plus.storage.getItem("uid");
+		self = plus.webview.currentWebview();
+		touid = self.touid;
+		page =1;
+		perpage =10;
+		get_pm_view();
+	});
+	
+	//刷新页面
+  	document.getElementById("refresh").addEventListener('tap',function(){
+  		self = plus.webview.currentWebview();
+  		self.reload();
+ 	 })
+  
+  	//短消息
+	document.getElementById("msg").addEventListener('tap',function(){
+		var all = plus.webview.all();
+		for(var i=0;i<all.length;i++){
+			if(all[i].id == 'pm') all[i].close();
+		}
+		
+		mui.openWindow({
+			id:"pm",
+			url:"pm.html",
+			createNew: true,
+			extras:{
+				type:"msg"
+			}
+		});
+		
+		setTimeout(function(){
+			plus.webview.currentWebview().close();
+		},1000);
+		
+		
+	})
+	
+	//发送短消息
+	document.getElementById("send_msg").addEventListener('tap',function(){
+		var all = plus.webview.all();
+		for(var i=0;i<all.length;i++){
+			if(all[i].id == 'pm') all[i].close();
+		}
+		
+		mui.openWindow({
+			id:"pm",
+			url:"pm.html",
+			createNew: true,
+			extras:{
+				type:"send_msg"
+			}
+		});
+		
+		setTimeout(function(){
+			plus.webview.currentWebview().close();
+		},1000);
+	})
+	
+	//黑名单
+	document.getElementById("blacks").addEventListener('tap',function(){
+		var all = plus.webview.all();
+		for(var i=0;i<all.length;i++){
+			if(all[i].id == 'pm') all[i].close();
+		}
+		
+		mui.openWindow({
+			id:"pm",
+			url:"pm.html",
+			createNew: true,
+			extras:{
+				type:"blacks"
+			}
+		});
+		
+		setTimeout(function(){
+			plus.webview.currentWebview().close();
+		},1000);
+	})
+	
+	//回复短信
+  $('.reply').on('tap','button',function(){
+	  	var message = $('#message').val();
+		if(message.length<1 || message.length>100){
+			plus.ui.toast('回复内容限制在100字以内！');
+			return false;
+		}
+		plus.nativeUI.showWaiting();
+		mui.ajax(_baseUrl+'/api/send_msg/?uid='+uid,{
+			type: "post",
+			data: {
+				touid: touid,
+				message: message
+			},
+			dataType: "json",
+			timeout: 10000,
+			success: function(data){
+				plus.nativeUI.closeWaiting();
+				if(data.code==1){		//回复成功
+					info =data.data;
+					str = $("#pm_tpl").html();
+                    str=strReplace("{f_id}",info.result,str);    //短信id
+                    str=strReplace("{f_avatar}",info.avatar,str);    //短信id
+                    str=strReplace("{f_message}",info.message,str);  //短信内容
+                    str=strReplace("{f_time}",info.time,str);  //发送时间
+                    $(".pmlist").find("dl:last").after(str);
+                    $('#message').val('');
+				}
+				plus.ui.toast(data.message);
+			}
+		});
+  	})
+	
+	//删除单条短信
+  $('.pmlist').on('tap','.del',function(){
+  	 var pmid = this.getAttribute('rel');
+  	 var li = this.parentNode.parentNode;
+  	 mui.confirm('确定删除此条短消息吗？','易搜网',['确定','取消'],function(e){
+  	 	if(e.index==0){
+  	 		mui.ajax(_baseUrl+'/api/del_msg/?pmid[]='+pmid,{
+  	 			type: "get",
+  	 			data: {uid:uid},
+  	 			dataType: "json",
+  	 			timeout: 10000,
+  	 			success: function(data){
+  	 				if(data.code==1){
+  	 					li.parentNode.removeChild(li);
+  	 				}
+  	 				plus.ui.toast(data.message);
+  	 			}
+  	 		});
+  	 	} else {
+  	 		mui.swipeoutClose(li);
+  	 	}
+  	 });
+  });
+  
+  //删除会话
+  function del_all(){
+  	 mui.confirm('要删除此会话的所有短消息吗？','易搜网',['确定','取消'],function(e){
+  	 	if(e.index == 0){
+  	 		plus.nativeUI.showWaiting();
+  	 		mui.ajax(_baseUrl+'/api/del_msg/?touid[]='+touid,{
+  	 			type: "get",
+  	 			data: {uid: uid},
+  	 			dataType: "json",
+  	 			timeout: 10000,
+  	 			success: function(data){
+  	 				if(data.code ==1){
+  	 					plus.webview.getWebviewById('pm').reload();
+  	 					mui.openWindow({
+  	 						id: "pm",
+  	 						url: 'pm.html'
+  	 					});			
+  	 					setTimeout(function(){
+  	 						plus.nativeUI.closeWaiting();
+  	 						plus.webview.currentWebview().close();
+  	 						plus.ui.toast(data.message);
+  	 					},5000);
+  	 				} else {
+  	 					plus.nativeUI.closeWaiting();
+  	 					plus.ui.toast(data.message);
+  	 				}
+  	 			}
+  	 		})
+  	 	}
+  	 });
+  }
+	
+  //获取会话短信列表
+  function get_pm_view(){
+  	mui.ajax(_baseUrl+'/api/view_msg',{
+		type: "get",
+		data: {
+			uid: uid,
+			touid: touid,
+			page: page,
+			perpage:perpage
+		},
+		dataType: "json",
+		timeout: 10000,
+		success: function(data){
+			pm = data.data.info.list;
+			pages = data.data.pages;
+			total = data.data.info.total;	//总记录数
+			r_avatar = data.data.r_avatar;
+			tousername = data.data.info.tousername;
+			
+			reply_html = '<table cellpadding="0" cellspacing="0" width="100%">'+
+						'<tr><td width="64" valign="top" id="avatar">'+r_avatar+'</td>'+
+						'<td><textarea id="message" rows="5" placeholder="回复内容限制在100字以内！"></textarea></td>'+
+						'</tr><tr><td></td>'+
+						'<td><button type="button" class="mui-btn mui-btn-red" id="msg_btn">发送回复</button></td>'+
+						'</tr></table>';
+						
+			$('.reply').html(reply_html);
+			if(pm){
+				var html = '<p class=num><b>共有 <i class="f541">'+total+'</i> 条与 '+tousername+' 的交谈记录</b>&nbsp;&nbsp;<a href="javascript:del_all();">[全删]</a></p>';
+				$.each(pm, function(k,v) {
+					html = html+'<dl class="mui-table-view-cell cc">'+
+						'<div class="mui-slider-right mui-disabled" style="height:30px;">'+
+						'<a class="mui-btn mui-btn-red del" rel='+v.pmid+'>删除</a>'+
+		                '</div><div class="mui-slider-handle"><dt class="l">'+v.avatar+'</dt>'+
+		                '<dt class="m">'+v.say+'<br />'+
+		                '<span class="msg">'+v.message+'</span><br />'+
+		                '<span class="time">'+v.dateline+'</span></dt>'+       
+		                '</div></dl>';
+				});
+				if(total > perpage) html = html+'<div class="pages">'+pages+'</div>';
+				$('.pmlist').html(html);
+				$('.pmlist img').hide();	//隐藏图像进行预加载
+				$('.reply img').hide();
+				pre_loadimg();
+				mui('.mui-scroll-wrapper').scroll().scrollToBottom();
+			} else {
+				$('.pmlist').html('此会话中没有短消息！');
+				}
+			}
+		});
+  }
+  
+  	function goPage(p){
+  		page = p;
+  		get_pm_view();
+  	}
+  
+	//字符替换
+	function strReplace(search, replace, str) {
+		var regex = new RegExp(search, "g");
+		return str.replace(regex, replace);
+	}
+</script>

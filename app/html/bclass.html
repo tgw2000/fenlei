@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">全部分类</h1>
+	</header>
+	<div class="mui-content">
+		<div class="loading">加载中...</div>
+		<ul class="mui-table-view mui-hidden" id="bclass">
+			
+		</ul>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript" charset="UTF-8">
+    mui.init();
+    mui.plusReady(function(){
+    	mui.ajax(_baseUrl + "/api/category",{ 
+			type: "get",
+			data: {pid:0},
+			async: true,
+			dataType: "json",
+			success: function(data) {
+				var html = '';
+				$.each(data.data, function(index, _data) {
+					html = html+'<li class="mui-table-view-cell"><a cid='+_data.cid+' title='+_data.title+' href="javascript:void(0);" class="mui-navigate-right">'+_data.title+'</a></li>';
+				});
+				$(".loading").remove();
+				$("#bclass").removeClass('mui-hidden').html(html);
+			}
+		});
+    })
+
+   //第二级分类
+	mui('#bclass').on('tap','a',function(){
+		var cid = this.getAttribute('cid');
+		var title = this.getAttribute('title');
+				mui.openWindow({
+			id: 'sclass',
+			url: 'sclass.html',
+			styles:{
+				top:0,
+				bottom:"50px"
+			},
+			extras:{
+            	cid:cid,
+            	title:title,
+            	from: "bclass"
+            }
+		});
+	})
+    
+  mui.back = function(){
+  	is_quit();
+  }
+</script>

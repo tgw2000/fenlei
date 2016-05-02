@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <style type="text/css">
+		.mui-content{ margin: 12px 15px 0 15px;}
+		.mui-input-row label {text-align: right;}
+		.mui-btn{ width: 100%; height: 38px; font-size: 17px;}
+		.link-area {display: block;margin-top: 10px;text-align: center; font-size:14px;}
+		.spliter {color: #bbb;padding: 0px 8px;}
+	</style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 class="mui-title">找回密码</h1>
+	</header>
+	<div class="mui-content">
+		<div class="mui-input-group">
+			<div class="mui-input-row">
+				<label>用户名：</label>
+				<input type="text" id="user" class="mui-input-clear" placeholder="请输入用户名"/>
+			</div>
+			<div class="mui-input-row">
+				<label>邮箱：</label>
+				<input type="text" id="email" class="mui-input-clear" placeholder="注册时填的邮箱"/>
+			</div>
+		</div>
+		
+		<div class="mui-content-padded" style="text-align: center;">
+			<button type="button" class="mui-btn mui-btn-blue" id="getpwd">找回密码</button>
+			<div class="link-area">
+				<a id='reg'>注册账号</a> <span class="spliter">|</span> 
+				<a id='login'>用户登录</a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript" charset="UTF-8">
+    mui.init();
+    
+    //找回密码
+    document.getElementById("getpwd").addEventListener('tap',function(){
+    	var user = document.getElementById("user");
+    	var email = document.getElementById("email");
+    	
+    	if(user.value.length==0){
+    		plus.ui.toast('请输入用户名！');
+    		return false;
+    	}
+    	
+    	if(email.value.length == 0){
+    		plus.ui.toast('请输入注册时填写的邮箱！');
+    		return false;
+    	}
+    	
+    	var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+    	if(!reg.test(email.value)){
+    		plus.ui.toast('电子邮箱格式不正确！');
+    		return false;
+    	}
+    	
+    	plus.nativeUI.showWaiting();
+    	mui.ajax(_baseUrl+'/api/getpwd',{
+    		type: "get",
+    		data: {
+    			user: user.value,
+    			email: email.value
+    		},
+    		dataType: "json",
+    		timeout: 10000,
+    		success: function(data){
+    			plus.nativeUI.closeWaiting();
+    			if(data.code==1){
+    				user.value = '';
+    				email.value = '';
+    			}
+    			plus.ui.toast(data.message);
+    		}
+    	});
+    });
+    
+    //打开注册页
+    document.getElementById("reg").addEventListener('tap',function(){
+    	mui.openWindow({
+    		id: "register",
+    		url: "register.html",
+    		styles: {
+    			top: 0,
+    			bottom: "50px"
+    		}
+    	});
+    });
+    
+    //打开登录页
+    document.getElementById("login").addEventListener('tap',function(){	
+    	mui.openWindow({
+    		id: "login",
+    		url: "login.html",
+    		styles: {
+    			top: 0,
+    			bottom: "50px"
+    		}
+    	});
+    });
+</script>

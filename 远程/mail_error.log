@@ -1,0 +1,83 @@
+2016-04-09 16:45:06 220 126.com Anti-spam GT for Coremail System (126com[20140526])
+2016-04-09 16:46:42 220 126.com Anti-spam GT for Coremail System (126com[20140526])
+2016-04-09 16:46:46 250 Mail OK queued as smtp4,jdKowAA3P0d0wQhXVg9zBQ--.57918S2 1460191608
+2016-04-09 16:46:46 email_sent:smtp2016-04-09 17:38:56 220-mulan.safesugar.net ESMTP Exim 4.86_1 #1 Sat, 09 Apr 2016 10:38:56 +0100 
+220-We do not authorize the use of this system to transport unsolicited, 
+220 and/or bulk e-mail.
+2016-04-09 17:38:58 email_smtp_auth_pw:535 Incorrect authentication data
+2016-04-09 17:38:58 email_smtp_error550 Authentication failed
+2016-04-09 17:38:58 email_smtp_error2016-04-09 17:38:58 email_smtp_data_failure:User-Agent: email
+Date: Sat, 9 Apr 2016 17:38:48 +0800
+From: =?utf-8?Q?=e6=98=93=e6=90=9c=e7=bd=91?= <admin@yiiso.cn>
+Return-Path: <admin@yiiso.cn>
+To: tgw2000@126.com
+Subject: =?utf-8?Q?=e6=98=93=e6=90=9c=e7=bd=91=e9=82=ae=e7=ae=b1=e7=bb=91=e5=ae?=
+ =?utf-8?Q?=9a=e9=82=ae=e4=bb=b6?=
+Reply-To: "admin@yiiso.cn" <admin@yiiso.cn>
+X-Sender: admin@yiiso.cn
+X-Mailer: email
+X-Priority: 3 (Normal)
+Message-ID: <5708cda8ad6d5@yiiso.cn>
+Mime-Version: 1.0
+Content-Type: multipart/alternative; boundary="B_ALT_5708cda8ad71f"
+
+This is a multi-part message in MIME format.
+Your email application may not support this format.
+
+--B_ALT_5708cda8ad71f
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+欢迎使用济宁易搜网，请点击以下链接，完成邮箱绑定：http://www.yiiso.cn/user/userdo/?act=bindemail&email=tgw2000@126.com&code=d43865da88146567此邮件由系统发送，请勿回复！
+
+
+--B_ALT_5708cda8ad71f
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+欢迎使用济宁易搜网，请点击以下链接，完成邮箱绑定：=
+<br/><a target=3D'_blank' href=3Dhttp://www.yiiso.cn/user/userdo/?act=3Dbin=
+demail&email=3Dtgw2000@126.com&code=3Dd43865da88146567>http://www.yiiso.cn/=
+user/userdo/?act=3Dbindemail&email=3Dtgw2000@126.com&code=3Dd43865da8814656=
+7</a><br/>此邮件由系统发送，请勿回复！
+
+--B_ALT_5708cda8ad71f--2016-04-09 17:38:58 email_smtp_data_failure:.2016-04-09 17:38:58 2016-04-09 17:38:58 email_smtp_error:2016-04-09 17:38:58 email_send_failure_smtp2016-04-09 17:39:12 220-mulan.safesugar.net ESMTP Exim 4.86_1 #1 Sat, 09 Apr 2016 10:39:12 +0100 
+220-We do not authorize the use of this system to transport unsolicited, 
+220 and/or bulk e-mail.
+2016-04-09 17:39:14 email_smtp_auth_pw:535 Incorrect authentication data
+2016-04-09 17:39:14 email_smtp_error550 Authentication failed
+2016-04-09 17:39:14 email_smtp_error2016-04-09 17:39:14 email_smtp_data_failure:User-Agent: email
+Date: Sat, 9 Apr 2016 17:39:07 +0800
+From: =?utf-8?Q?=e6=98=93=e6=90=9c=e7=bd=91?= <admin@yiiso.cn>
+Return-Path: <admin@yiiso.cn>
+To: tgw2000@126.com
+Subject: =?utf-8?Q?=e6=98=93=e6=90=9c=e7=bd=91=e9=82=ae=e7=ae=b1=e7=bb=91=e5=ae?=
+ =?utf-8?Q?=9a=e9=82=ae=e4=bb=b6?=
+Reply-To: "admin@yiiso.cn" <admin@yiiso.cn>
+X-Sender: admin@yiiso.cn
+X-Mailer: email
+X-Priority: 3 (Normal)
+Message-ID: <5708cdbb735c5@yiiso.cn>
+Mime-Version: 1.0
+Content-Type: multipart/alternative; boundary="B_ALT_5708cdbb7361a"
+
+This is a multi-part message in MIME format.
+Your email application may not support this format.
+
+--B_ALT_5708cdbb7361a
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+欢迎使用济宁易搜网，请点击以下链接，完成邮箱绑定：http://www.yiiso.cn/user/userdo/?act=bindemail&email=&code=此邮件由系统发送，请勿回复！
+
+
+--B_ALT_5708cdbb7361a
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+欢迎使用济宁易搜网，请点击以下链接，完成邮箱绑定：=
+<br/><a target=3D'_blank' href=3Dhttp://www.yiiso.cn/user/userdo/?act=3Dbin=
+demail&email=3D&code=3D>http://www.yiiso.cn/user/userdo/?act=3Dbindemail&em=
+ail=3D&code=3D</a><br/>此邮件由系统发送，请勿回复！
+
+--B_ALT_5708cdbb7361a--2016-04-09 17:39:14 email_smtp_data_failure:.2016-04-09 17:39:14 2016-04-09 17:39:14 email_smtp_error:2016-04-09 17:39:14 email_send_failure_smtp

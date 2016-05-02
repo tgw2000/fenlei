@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style type="text/css">
+			body,
+			.mui-content {
+				background-color: #333;
+				color: #fff;
+				padding-top: 5px;
+			}
+			#nickname{font-size: 14px !important;}
+			p {
+				margin-bottom: 0px;
+			}
+			.title {
+				margin: 10px 0;
+				text-align: center;
+			}
+			.menu-name {
+				padding-left: 15px;
+				font-size: 16px;
+				background-color: #3b3b3b;
+				height: 35px;
+				line-height: 35px;
+			}
+			#category li{
+				height: 38px;
+				line-height: 38px;
+				padding:5px 15px!important ;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="mui-content">
+			<ul class="mui-table-view mui-table-view-inverted mui-hidden" id="login_ul">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" type="login" href="login.html">
+						登录
+					</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view mui-table-view-inverted mui-hidden" id="user_ul">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" type="my" href="my.html" id="nickname" tab="my"></a>
+				</li>
+			</ul>
+			<p class="menu-name">分类</p>
+			<ul class="mui-table-view mui-table-view-inverted" id="category">
+				
+			</ul>
+			<p class="menu-name">其他</p>
+			<ul class="mui-table-view mui-table-view-inverted">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" type="setting" href="setting.html" tab="setting">
+						设置
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/common.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var index = null;
+			mui.plusReady(function() {
+				get_cate();     //获取侧滑菜单信息分类
+				//获得主页面webview引用；
+				index = plus.webview.currentWebview().opener();
+				//判断用户是否登录
+				
+				if(isLogin()) {
+					document.getElementById('nickname').innerHTML ='欢迎：'+ plus.storage.getItem('user_token');
+					document.getElementById('login_ul').className = "mui-table-view mui-table-view-inverted mui-hidden";
+					document.getElementById('user_ul').className = "mui-table-view mui-table-view-inverted mui-block";
+				
+				} else {
+					document.getElementById('login_ul').className = "mui-table-view mui-table-view-inverted mui-block";
+					document.getElementById('user_ul').className = "mui-table-view mui-table-view-inverted mui-hidden";
+				}
+			});
+			mui('.mui-table-view').on('tap', 'a', function() {
+				var type = this.getAttribute("type");
+				var cid = this.getAttribute("cid");
+				var title = this.getAttribute('title');
+				var id = this.getAttribute("href");
+				
+				if(type=='sclass'){		//小类页面
+					mui.openWindow({
+						id: id,
+						url: id,
+						createNew:true,
+						styles:{
+							top:0,
+							bottom:"50px"
+						},
+						extras:{      
+            				cid:cid,
+            				title:title,
+            				from: "index-menu"
+            			}
+					});
+					mui.fire(index,"changeclass",{index:1});
+				} else if(type=='my' || type=='login'){
+					mui.openWindow({
+						id: id,
+						url: id,
+						createNew:true,
+						styles:{
+							top:0,
+							bottom:"50px"
+						},
+						extras:{flag:flag}
+					});
+					mui.fire(index,"changeclass",{index:2});
+				}　else {
+					mui.openWindow({
+						id: id,
+						url: id,
+						createNew:true
+					});
+				}
+				close();
+			});
+			
+			/**
+			 * 关闭侧滑菜单
+			 */
+			function close() {
+				mui.fire(mui.currentWebview.opener(), "menu:close");
+			}
+			//点击“关闭侧滑菜单”按钮处理逻辑
+			//			document.getElementById("close-btn").addEventListener("tap",close);
+			//在android4.4.2中的swipe事件，需要preventDefault一下，否则触发不正常
+			window.addEventListener('dragstart', function(e) {
+				mui.gestures.touch.lockDirection = true; //锁定方向
+				mui.gestures.touch.startDirection = e.detail.direction;
+			});
+			window.addEventListener('dragleft', function(e) {
+				if (!mui.isScrolling) {
+					e.detail.gesture.preventDefault();
+				}
+			});
+			 //监听左滑事件，若菜单已展开，左滑要关闭菜单；
+			window.addEventListener("swipeleft", function(e) {
+				if (Math.abs(e.detail.angle) > 170) {
+					close();
+				}
+			});
+			window.addEventListener("scanresult", function(e) {
+				var result = e.detail.result;
+				if(result) {
+					plus.storage.setItem(_user_token, result);
+				
+					mui.ajax(_baseUrl + '/api/user/userinfo',{
+						type: 'get',
+						dataType: 'json',
+						async: false,
+						data: {
+							token: result
+						},
+						success: function(data) {
+							if(data.code == 200) {
+								var nickname = data.detail.nickname;
+								plus.storage.setItem(_user_nickname, nickname);
+								document.getElementById('nickname').innerHTML = nickname;
+								document.getElementById('login_ul').className = "mui-table-view mui-table-view-inverted mui-hidden";
+								document.getElementById('user_ul').className = "mui-table-view mui-table-view-inverted mui-block";
+								mui.fire(mui.currentWebview.opener(), "showCreateTopic", {});
+							} else {
+								plus.nativeUI.alert(data.description);
+							}
+						}
+					})
+				}
+			});
+			window.addEventListener("logout", function(e) {
+				plus.storage.removeItem(_user_nickname);
+				plus.storage.removeItem(_user_token);
+				document.getElementById('login_ul').className = "mui-table-view mui-table-view-inverted mui-block";
+				document.getElementById('user_ul').className = "mui-table-view mui-table-view-inverted mui-hidden";
+			});
+            
+            var flag=0;
+            window.addEventListener('have_login',function(e){
+            	flag = e.detail.flag;
+				document.getElementById('nickname').innerHTML ='欢迎：'+ plus.storage.getItem('user_token');
+				document.getElementById('login_ul').className = "mui-table-view mui-table-view-inverted mui-hidden";
+				document.getElementById('user_ul').className = "mui-table-view mui-table-view-inverted mui-block";
+			});
+            
+			function get_cate() {
+				mui.ajax(_baseUrl + "/api/category",{ 
+					type: "get",
+					data: {pid:0},
+					async: true,
+					dataType: "json",
+					success: function(data) {
+						$.each(data.data, function(index, _data) {
+							var html = '<li class="mui-table-view-cell ">' +
+							    '<a class="mui-navigate-right" type="sclass" href="sclass.html" title='+_data.title+' cid="'+_data.cid+'">' +
+							        _data.title +
+							    '</a>' +
+							'</li>';
+							$("#category").append(html);
+						});
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

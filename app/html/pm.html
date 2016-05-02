@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    <style type="text/css">
+    	#blacks_btn,#msg_btn {width: 100%; font-size: 16px; text-align: center;}
+    	.tips {font-size: 14px; color: #666666; margin-top: 15px; display: block;}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <a class="mui-icon mui-icon-refreshempty mui-pull-right" id="refresh"></a>
+	    <h1 class="mui-title">站内短消息</h1>
+	</header>
+	
+	<div class="mui-content">
+		<div style="margin-top: 5px;">
+			<div id="segmentedControl" class="mui-segmented-control mui-segmented-control-inverted">
+				<a class="mui-control-item" href="#c_msg" id="msg">短消息</a>
+				<a class="mui-control-item" href="#c_send_msg" id="send_msg">发送短消息</a>
+				<a class="mui-control-item" href="#c_blacks" id="blacks">黑名单</a>
+			</div>
+		</div>
+		
+		<div style="color: #333333;">
+			<!--短消息列表-->
+			<div id="c_msg" class="mui-control-content pmlist">
+				
+					<div class="loading">数据加载中...</div>
+				
+			</div>
+			
+			<!--发送短消息-->
+			<div id="c_send_msg" class="mui-control-content" style="padding: 15px;">
+				<form class="mui-input-group" style="margin-bottom: 10px;">
+					<div class="mui-input-row">
+						<label style="width: 30%;">收件人：</label>
+						<input style="width: 70%;" type="text" id="touser" class="mui-input-clear" placeholder="输入收件人用户名"/>
+					</div>
+					<textarea id="msg_content" rows="5" placeholder="输入短消息内容，限制在100字以内！"></textarea>
+				</form>
+				<button type="button" class="mui-btn mui-btn-red" id="msg_btn">发送短消息</button>
+				<span class="tips"><b>提示：</b>多个收件人请使用英文逗号分隔，如:张三,李四等等...</span>
+			</div>
+			
+			<!--黑名单-->
+			<div id="c_blacks" class="mui-control-content" style="padding: 15px;">
+				<textarea style="margin-bottom: 5px;" id="blacks_content" rows="5" placeholder="输入要加为黑名单的用户名"></textarea>
+				<button type="button" class="mui-btn mui-btn-red" id="blacks_btn">设置黑名单</button>
+				<span class="tips"><b>提示：</b>添加多个忽略人员名单时用逗号 "," 隔开(如:张三,李四,王五等)。当这些被添加的忽略用户给您发送短消息时将不予接收，如需禁止所有用户发来的短消息，请设置为 "{ALL}"</span>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript">
+	mui.init();
+	var uid,page, msg_flag, blacks_flag;
+	mui.plusReady(function(){
+		uid = plus.storage.getItem("uid");
+		self = plus.webview.currentWebview();
+		type = self.type;
+		$('.mui-control-item').removeClass('mui-active');
+		$('.mui-control-content').removeClass('mui-active');
+		$('#'+type).addClass('mui-active');
+		$('#c_'+type).addClass('mui-active');
+		if(type=='blacks') get_blackls();
+		if(type=='msg'){
+			page = 1;
+			get_pmlist();
+		}
+	});
+	
+	//发送短消息
+	document.getElementById("msg_btn").addEventListener('tap',function(){
+		var touser = $('#touser').val();
+		var message = $('#msg_content').val();
+		if(touser.length==0){
+			plus.ui.toast('请输入收件人用户名！');
+			return false;
+		}
+		if(message.length<1 || message.length>100){
+			plus.ui.toast('短消息内容限制在100字以内！');
+			return false;
+		}
+		plus.nativeUI.showWaiting();
+		mui.ajax(_baseUrl+'/api/send_msg/?uid='+uid,{
+			type: "post",
+			data: {
+				touser: touser,
+				message: message
+			},
+			dataType: "json",
+			timeout: 10000,
+			success: function(data){
+				plus.nativeUI.closeWaiting();
+				if(data.code==1){		//发送成功后清空表单
+					$('#touser').val('');
+					$('#msg_content').val('');
+				}
+				plus.ui.toast(data.message);
+			}
+		});
+	});
+	
+	//获取短信列表
+	document.getElementById("msg").addEventListener('tap',function(){
+		//flag防止重复执行ajax请求
+		if( msg_flag!=1 ) get_pmlist();
+	});
+	
+	//获取黑名单
+	document.getElementById("blacks").addEventListener('tap',function(){
+		//flag防止重复执行ajax请求
+		if( blacks_flag!=1 ) get_blackls();
+	});
+	
+	//设置黑名单
+	document.getElementById("blacks_btn").addEventListener('tap',function(){
+		plus.nativeUI.showWaiting();
+		mui.ajax(_baseUrl+'/api/blacks/?act=set_blacks&uid='+uid,{
+			type: "post",
+			data: {
+				blackls: $('#blacks_content').val()
+			},
+			dataType: "json",
+			timeout: 10000,
+			success: function(data){
+				plus.nativeUI.closeWaiting();
+				plus.ui.toast(data.message);
+			}
+		});
+	});
+	
+  //刷新页面
+  document.getElementById("refresh").addEventListener('tap',function(){
+  		self = plus.webview.currentWebview();
+  		self.reload();
+  })
+  
+  //查看短信会话
+  $(".pmlist").on('tap','.mui-slider-handle',function(){
+  		var touid = this.getAttribute('rel');
+  		mui.openWindow({
+  			id: 'pm_view',
+  			url: 'pm_view.html',
+  			extras: {
+  				touid:touid
+  			}
+  		});
+  });
+  
+  //短消息列表
+  function get_pmlist(){
+  	mui.ajax(_baseUrl + "/api/msg",{ 
+		type: "get",
+		data: {
+			uid: uid,
+			page: page,
+			perpage: 10
+		},
+		dataType: "json",
+		timeout: 10000,
+		success: function(data) {
+			if(data.code==-1){
+				mui.openWindow({id:'login',url:"login.html"});
+				plus.ui.toast(data.message);
+			} else if(data.code==1){
+				pm = data.data.list;
+				pages = data.data.pages;
+				if(pm){
+					var html='';
+					$.each(pm, function(k,v) {
+						if(v.new==1) cls= "msg f333 b"; else cls = "msg";
+						html = html+'<dl class="mui-table-view-cell cc">'+
+								'<div class="mui-slider-right mui-disabled" style="height:30px;">'+
+								'<a class="mui-btn mui-btn-green add_black" rel='+v.tousername+'>忽略</a>'+
+								'<a class="mui-btn mui-btn-red del_msg" rel='+v.touid+'>删除</a>'+
+	                            '</div><div class="mui-slider-handle" rel='+v.touid+'><dt class="l">'+v.avatar+'</dt>'+
+	                            '<dt class="m">'+v.say+'<br />'+
+	                            '<span class="'+cls+'">'+v.lastsummary+'</span><br />'+
+	                            '<span class="time">'+v.dateline+'</span></dt>'+       
+	                            '</div></dl>';
+					});
+					html = html+'<div class="pages">'+pages+'</div>';
+					$('.pmlist').html(html);
+					$('.pmlist img').hide();	//隐藏图像进行预加载
+					pre_loadimg();
+					msg_flag =1;
+					
+				} else {
+					$('.pmlist').html('你目前还没有任何短消息!');
+				}
+			} else {
+				plus.ui.toast(data.message);
+			}
+		}
+	});
+  }
+  
+  //删除短消息
+  $('.pmlist').on('tap','.del_msg',function(){
+  	var dl = this.parentNode.parentNode;
+  	var touid = this.getAttribute('rel');
+  	mui.confirm('确定删除这个会话吗？','易搜网',['确定','取消'],function(e){
+  		if(e.index==0){
+  			mui.ajax(_baseUrl+'/api/del_msg/?touid[]='+touid,{
+  				type: "get",
+  				data: {
+  					uid: uid,
+  				},
+  				dataType: "json",
+  				timeout: 10000,
+  				success: function(data){
+  					if(data.code==1){
+  						dl.parentNode.removeChild(dl);
+  					}
+  					plus.ui.toast(data.message);
+  				}
+  			})
+  		} else {
+  			setTimeout(function(){
+  				mui.swipeoutClose(dl);
+  			},0)
+  		}
+  	})
+  })
+  
+  //加入用户到黑名单
+  $(".pmlist").on('tap','.add_black',function(){
+  	var dl = this.parentNode.parentNode;
+  	var tousername = this.getAttribute('rel');
+  	mui.confirm('确定要将此用户加入黑名单吗？','易搜网',['确定','取消'],function(e){
+  		if(e.index == 0){
+  			mui.ajax(_baseUrl+'/api/blacks/?act=add_blacks',{
+  				type: "get",
+  				data: {
+  					uid:uid,
+  					tousername: tousername
+  				},
+  				dataType: "json",
+  				timeout: 10000,
+  				success: function(data){
+  					plus.ui.toast(data.message);
+  					mui.swipeoutClose(dl);
+  				}
+  			});
+  		}else{
+  			setTimeout(function(){
+  				mui.swipeoutClose(dl);
+  			},0);
+  		}
+  	});
+  });
+  
+  //获取黑名单内容
+  function get_blackls(){
+  	$("#blacks_content").val('数据读取中...');
+	mui.ajax(_baseUrl + "/api/blacks",{ 
+		type: "get",
+		data: {uid:uid},
+		dataType: "json",
+		timeout: 10000,
+		success: function(data) {
+			plus.nativeUI.closeWaiting();
+			if(data.code==-1){
+				mui.openWindow({id:'login',url:"login.html"});
+				plus.ui.toast(data.message);
+				
+			} else if(data.code==1){
+				$("#blacks_content").val(data.message);
+				blacks_flag =1;
+				
+			} else {
+				plus.ui.toast(data.message);
+			}
+		}
+	});
+  }
+  
+  function goPage(p){
+  	 page = p;
+  	 get_pmlist();
+  }
+</script>

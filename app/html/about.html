@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    <style type="text/css">
+    	.mui-input-row label{text-align: right;}
+    	#about_btn,#pwd_btn {width: 80%; font-size: 16px;}
+    	#user {margin-top: 10px; color: #666666; display: block;}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+	    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	    <h1 class="mui-title">我的资料</h1>
+	</header>
+	
+	<div class="mui-content">
+		<div style="margin-top: 5px;">
+			<div id="segmentedControl" class="mui-segmented-control mui-segmented-control-inverted">
+				<a class="mui-control-item mui-active" href="#about">基本资料</a>
+				<a class="mui-control-item" href="#pwd">修改密码</a>
+			</div>
+		</div>
+		
+		<div style="margin-top: 10px; color: #333333;">
+			<!--修改基本资料-->
+			<div id="about" class="mui-control-content mui-active">
+				<form class="mui-input-group" id="about_form">
+					<div class="mui-input-row">
+						<label>用户名：</label>
+						<span id="user"></span>
+					</div>
+					
+					<div class="mui-input-row">
+						<label>手机：</label>
+						<input type="text" id="mobile" class="mui-input-clear" placeholder="请输入手机"/>
+					</div>
+					
+					<div class="mui-input-row">
+						<label>电子邮箱：</label>
+						<input type="text" id="email" class="mui-input-clear" placeholder="请输入电子邮箱"/>
+					</div>
+					
+					<div class="mui-input-row">
+						<label>QQ：</label>
+						<input type="text" id="qq" class="mui-input-clear" placeholder="请输入qq号"/>
+					</div>
+				</form>
+				<div class="mui-content-padded" style="text-align: center;">
+					<button type="button" class="mui-btn mui-btn-blue" id="about_btn">更改资料</button>
+				</div>
+			</div>
+			<!--修改密码-->
+			<div id="pwd" class="mui-control-content">
+				<form class="mui-input-group" id="pwd_form">
+					<div class="mui-input-row">
+						<label>原密码：</label>
+						<input type="password" id="pwd_old" class="mui-input-clear" placeholder="请输入原密码"/>
+					</div>
+					
+					<div class="mui-input-row">
+						<label>新密码：</label>
+						<input type="password" id="pwd_new" class="mui-input-password" placeholder="请输入新密码"/>
+					</div>
+					
+					<div class="mui-input-row">
+						<label>确认密码：</label>
+						<input type="password" id="pwd_again" class="mui-input-password" placeholder="请再输入一次"/>
+					</div>
+				</form>
+				<div class="mui-content-padded" style="text-align: center;">
+					<button type="button" class="mui-btn mui-btn-blue" id="pwd_btn">修改密码</button>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+
+<script type="text/javascript" charset="UTF-8">
+    mui.init();
+    mui.plusReady(function(){
+    	var user = plus.storage.getItem("user_token");
+    	$("#user").html("<span class='f541'>加载中...</span>");
+    	mui.ajax(_baseUrl + "/api/about",{ 
+			type: "get",
+			data: {user:user},
+			async: true,
+			dataType: "json",
+			success: function(data) {
+				var info=data.data;
+				if(data.code==-1){
+   					mui.openWindow({id:'login',url:"login.html"});
+   					plus.ui.toast(data.message);
+   					
+   				} else if(data.code==1){
+    				$("#user").html(user+"<span class='f12 f541'>&nbsp;(不可更改)</span>");
+    				$("#mobile").val(info.mobile);
+    				$("#email").val(info.email);
+    				$("#qq").val(info.qq);
+    				
+    			} else {
+    				plus.ui.toast(data.message);
+    			}
+			}
+		});
+    })
+   
+   //修改资料
+   document.getElementById('about_btn').addEventListener('tap',function(){
+   		var user = plus.storage.getItem("user_token");
+   		var mobile = $("#mobile").val();
+   		var email = $("#email").val();
+   		var qq = $("#qq").val();
+   		if(mobile.length==0 || email.length==0 || qq.length==0){
+   			plus.ui.toast('请将资料填写完整');
+   			return false;
+   		}
+   		plus.nativeUI.showWaiting();
+   		mui.ajax(_baseUrl+'/api/about/?act=do&user='+user,{
+   			type: "post",
+   			data: {mobile:mobile,email:email,qq:qq},
+   			dataType: "json",
+   			timeout: 10000,
+   			success: function(data){
+   				plus.nativeUI.closeWaiting();
+   				if(data.code==-1){
+   					mui.openWindow({id:'login',url:"login.html"});
+   				}
+   				plus.ui.toast(data.message);
+   			}
+   		})
+   })
+   
+   //修改密码
+   document.getElementById('pwd_btn').addEventListener('tap',function(){
+   		var user = plus.storage.getItem("user_token");
+   		var pwd_old = $("#pwd_old").val();
+   		var pwd_new = $("#pwd_new").val();
+   		var pwd_again = $("#pwd_again").val();
+   		
+   		if(pwd_old.length==0){
+   			plus.ui.toast('请输入原密码！');
+   			return false;
+   		}
+   		
+   		if(pwd_new.length==0){
+   			plus.ui.toast('请输入新密码！');
+   			return false;
+   		}
+   		
+   		if(pwd_again!=pwd_new){
+   			plus.ui.toast('新密码与确认密码不一致！');
+   			return false;
+   		}
+   		
+   		plus.nativeUI.showWaiting();
+   		mui.ajax(_baseUrl+'/api/pwd/',{
+   			type: "post",
+   			data: {user:user,pwd_old:pwd_old,pwd_new:pwd_new},
+   			dataType: "json",
+   			async: true,
+   			success: function(data){
+   				plus.nativeUI.closeWaiting();
+   				if(data.code==-1){
+   					mui.openWindow({id:'login',url:"login.html"});
+   				}
+   				if(data.code==1){
+   					$(":input","#pwd_form").val('');  //清空表单
+   				}
+   				plus.ui.toast(data.message);
+   			}
+   		})
+   })
+</script>

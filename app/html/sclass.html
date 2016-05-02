@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title></title>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/app.css" rel="stylesheet"/>
+    
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title" id="title"></h1>
+	</header>
+	<div class="mui-content">
+		<div class="loading">加载中...</div>
+		<ul class="mui-table-view mui-hidden" id="sclass">
+			
+		</ul>
+	</div>
+</body>
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/common.js"></script>
+<script type="text/javascript" charset="UTF-8">
+    mui.init();
+    
+    var from;
+    mui.plusReady(function(){
+    	var self = plus.webview.currentWebview();	//当前窗口
+    	//var main = self.opener().opener();		//主窗口对象
+    	var cid = self.cid;
+    	var title = self.title;
+    	from = self.from;
+    	
+  		document.getElementById('title').innerHTML=title;
+  		
+		mui.ajax(_baseUrl + "/api/category",{ 
+			type: "get",
+			data: {pid:cid},
+			timeout: 10000,
+			dataType: "json",
+			success: function(data) {
+				var html = '';
+				$.each(data.data, function(index, _data) {
+					html = html+'<li class="mui-table-view-cell"><a href="list.inc.html" cid='+_data.cid+' title='+_data.title+' class="mui-navigate-right">'+_data.title+'</a></li>';
+				});
+				$(".loading").remove();
+				$("#sclass").removeClass('mui-hidden').html(html);
+			}
+		});
+		
+		//点击小类进入信息列表
+	    mui("#sclass").on('tap','a',function(){
+	    	var cid = this.getAttribute("cid");
+	    	var catname = this.getAttribute('title');
+			mui.openWindow({
+				id:'list',
+				url:'list.html',
+				styles:{
+					top:0,
+					bottom:"50px"
+				},
+				extras:{
+					cid:cid,
+					catname:catname
+				}
+			});
+	    })
+    });
+    
+  mui.back = function(){
+  	if(from == 'bclass'){
+  		mui.openWindow({
+	        "id":'bclass',
+	        "url":'bclass.html',
+	        "styles":{
+	            top:'0px',//mui标题栏默认高度为45px
+	            bottom: '50px'//默认为0px，可不定义
+	        }
+    	});
+  	} else {
+  		var main = plus.webview.getLaunchWebview();
+  		main.show();
+  		mui.fire(main,"changeclass",{index:0});
+  	}
+
+    setTimeout(function(){
+    	plus.webview.currentWebview().close();
+    },500);
+  }
+</script>

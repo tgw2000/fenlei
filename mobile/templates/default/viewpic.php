@@ -1,0 +1,101 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,maximum-scale=1" />
+    <title>易搜网_免费查询发布各类济宁分类信息</title>
+    <link type="text/css" rel="stylesheet" href="<?=TPL?>/css/style.css"/>
+</head>
+
+<body>
+
+<div class="view_content">
+    <header>
+        <div class="imgview_head">
+            <a href="#" class="c_link"><span class="category_bg back"></span>返回</a>
+            <span class="cur_index">1</span><span>/<?=count($photos)?></span>
+        </div>
+    </header>
+
+  <section id="view_box"  class="view_box">
+    <div id="view_box-content" class="view_box_content">
+        <?php foreach($photos as $row){
+            $img = 'http://www.yiiso.cn'.str_replace('_100X75','_B',$row['path']);
+        ?>
+        <figure>
+            <img lazload="<?=$img?>"/>
+        </figure>
+        <?php }?>
+    </div>
+  </section>
+</div>
+
+  <script type="text/javascript" src="<?=TPL?>/js/zepto-build-with-data.js"></script>
+  <script type="text/javascript" src="<?=TPL?>/js/swipeslide.js"></script>
+
+<script type="text/javascript">
+ $(function($) {
+    var ind = 0,
+            nextItem,
+            tempItem,
+            jump = false;
+    var imgList = $('.view_box_content figure');
+     tempItem = imgList.eq(ind).find('img');
+     tempItem.attr('src',tempItem.attr('lazload'));
+     tempItem = imgList.eq(ind - 1).find('img');
+     tempItem.attr('src',tempItem.attr('lazload'));
+     tempItem = imgList.eq(ind + 1).find('img');
+     tempItem.attr('src',tempItem.attr('lazload'));
+
+    var swipe = $('#view_box').swipeSlide({
+      beforeChange: function(instance, oldIndex, newIndex){
+        instance.visibleSlides().find('figcaption').removeClass('active');
+          if(!jump){
+              if(newIndex > oldIndex){
+                  nextItem = imgList.eq(newIndex + 1).find('img');
+                  if(!nextItem.attr('src'))
+                    nextItem.attr('src',nextItem.attr('lazload'));
+              } else if(newIndex < oldIndex){
+                  nextItem = imgList.eq(newIndex - 1).find('img')
+                  if(!nextItem.attr('src'))
+                     nextItem.attr('src',nextItem.attr('lazload'));
+              }
+          } else {
+              tempItem = imgList.eq(newIndex).find('img');
+              tempItem.attr('src',tempItem.attr('lazload'));
+              tempItem = imgList.eq(newIndex - 1).find('img');
+              tempItem.attr('src',tempItem.attr('lazload'));
+              tempItem = imgList.eq(newIndex + 1).find('img');
+              tempItem.attr('src',tempItem.attr('lazload'));
+              jump = false;
+          }
+      },
+      afterChange: function(instance, newIndex){
+          $('.cur_index').text(newIndex + 1);
+          $('.album_index').text(imgList.eq(newIndex).attr('data-index'));
+          $('.album_total').text(imgList.eq(newIndex).attr('data-total'));
+          $('.album_title').text(imgList.eq(newIndex).attr('data-title'));
+          instance.visibleSlides().find('figcaption').addClass('active');
+      },
+      bulletNavigation: false,
+      first: ind
+    }).data("swipeInstance");
+
+
+    var viewConHeight = $(".view_content").height() - $(".imgview_head").height();
+    $(".view_box").height(viewConHeight);
+    $('.ui-swipeslide-slide').height(viewConHeight);
+ }(Zepto));
+</script>
+<script type="text/javascript">
+	$('.c_link').on('click',function(e){
+		history.go(-1);
+		e.preventDefault();
+	})
+</script>
+
+</body>
+</html>
